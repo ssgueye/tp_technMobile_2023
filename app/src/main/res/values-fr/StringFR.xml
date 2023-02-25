@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">TP_TechnoMobile</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Bonjour Fragment vide</string>
+    <string name="login">Se connecter</string>
+    <string name="e_mail">E-mail</string>
+    <string name="password">Mot de passe</string>
+    <string name="go_to_openium_web_page">Aller au site web de Openium</string>
+    <string name="logout">Déconnecter</string>
+    <string name="go_to_openium">Aller à Openium</string>
+    <string name="scan_qrcode">Scanner QrCode</string>
+    <string name="todo_list">Ma TODO List</string>
+</resources>

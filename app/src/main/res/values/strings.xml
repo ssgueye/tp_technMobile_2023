@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">TP_TechnoMobile</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="login">Login</string>
+    <string name="e_mail">E-mail</string>
+    <string name="password">Password</string>
+    <string name="go_to_openium_web_page">Go TO Openium Web page</string>
+    <string name="logout">Logout</string>
+    <string name="go_to_openium">Go To Openium</string>
+    <string name="scan_qrcode">Scan QrCode</string>
+    <string name="api_memes">GO TO MEMES</string>
+    <string name="add">Add</string>
+    <string name="title">Title</string>
+    <string name="description">Description</string>
+</resources>

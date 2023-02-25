@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/activityFragment">
+
+    <fragment
+        android:id="@+id/activityFragment"
+        android:name="com.example.tp_technomobile.ActivityFragment"
+        android:label="fragment_activity"
+        tools:layout="@layout/fragment_activity" >
+        <action
+            android:id="@+id/action_activityFragment_to_secondFragment2"
+            app:destination="@id/secondFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/secondFragment"
+        android:name="com.example.tp_technomobile.SecondFragment"
+        android:label="fragment_second"
+        tools:layout="@layout/fragment_second" >
+        <action
+            android:id="@+id/action_secondFragment_to_activityFragment"
+            app:destination="@id/activityFragment" />
+        <action
+            android:id="@+id/action_secondFragment_to_fragmentListTodo"
+            app:destination="@id/fragmentListTodo" />
+    </fragment>
+    <fragment
+        android:id="@+id/fragmentListTodo"
+        android:name="com.example.tp_technomobile.FragmentListTodo"
+        android:label="fragment_list_todo"
+        tools:layout="@layout/fragment_list_todo" >
+        <action
+            android:id="@+id/action_fragmentListTodo_to_addItemFragment"
+            app:destination="@id/addItemFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/addItemFragment"
+        android:name="com.example.tp_technomobile.AddItemFragment"
+        android:label="fragment_add_item"
+        tools:layout="@layout/fragment_add_item" >
+        <action
+            android:id="@+id/action_addItemFragment_to_fragmentListTodo"
+            app:destination="@id/fragmentListTodo" />
+    </fragment>
+</navigation>
