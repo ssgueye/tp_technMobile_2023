@@ -1,6 +1,12 @@
 package com.example.tp_technomobile.model
 
-class Mem {
-    var name: String? = null
-    var url: String? = null
-}
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity
+data class Mem(
+    @PrimaryKey var id:Int,
+    @ColumnInfo var name: String? = null,
+    @ColumnInfo var url: String? = null
+)

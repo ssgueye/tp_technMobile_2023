@@ -1,6 +1,5 @@
 package com.example.tp_technomobile.recycleview
 
-import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,7 +8,6 @@ import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.example.tp_technomobile.R
-import com.example.tp_technomobile.model.Mem
 
 
 class CustomAdapter(private val dataSet: ArrayList<Mem>) :
