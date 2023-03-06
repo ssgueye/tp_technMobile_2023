@@ -60,26 +60,35 @@ class FragmentListTodo : Fragment() {
         recyclerView?.layoutManager = LinearLayoutManager(activity)
 
         CoroutineScope(Dispatchers.IO).launch {
-            try {
                 // Appel avec l’API
                 val client = HttpClient(CIO)
                 val response: HttpResponse = client.get("https://api.imgflip.com/get_memes")
+                println(response.status)
                 val gson = Gson()
                 val data: String = response.bodyAsText()
                 val memeResponse: MemResponse = gson.fromJson(data, MemResponse::class.java)
 
                 dataset = memeResponse.data.memes as ArrayList<Mem>
 
+                //Initialize database
+                /*val db = Room.databaseBuilder(
+                    requireContext(),
+                    AppDatabase::class.java, "mem_database"
+                ).allowMainThreadQueries().build()
+
+                val memDao = db?.memDao()
+
+                memDao?.insertAll(dataset)*/
+
                 client.close()
+
                 withContext(Dispatchers.Main) {
+
                     // Faire un traitement sur le MainThread
                     var adapter = CustomAdapter(dataset)
 
                     recyclerView?.adapter = adapter
                 }
-            }catch (e:Exception){
-                println(e.message)
-            }
 
         }
 
