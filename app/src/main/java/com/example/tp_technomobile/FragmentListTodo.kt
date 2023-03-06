@@ -11,7 +11,9 @@ import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.room.Room
 import com.example.tp_technomobile.data.MemResponse
+import com.example.tp_technomobile.database.AppDatabase
 import com.example.tp_technomobile.model.Mem
 import com.example.tp_technomobile.recycleview.CustomAdapter
 import com.google.gson.Gson
@@ -29,6 +31,7 @@ class FragmentListTodo : Fragment() {
     private var dataset = ArrayList<Mem>()
     private var adapter: CustomAdapter? = null
     private var recyclerView: RecyclerView? = null
+    private var database:AppDatabase?=null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,40 +62,6 @@ class FragmentListTodo : Fragment() {
         recyclerView = view.findViewById<RecyclerView>(R.id.recyclerview)
         recyclerView?.layoutManager = LinearLayoutManager(activity)
 
-        CoroutineScope(Dispatchers.IO).launch {
-                // Appel avec l’API
-                val client = HttpClient(CIO)
-                val response: HttpResponse = client.get("https://api.imgflip.com/get_memes")
-                println(response.status)
-                val gson = Gson()
-                val data: String = response.bodyAsText()
-                val memeResponse: MemResponse = gson.fromJson(data, MemResponse::class.java)
-
-                dataset = memeResponse.data.memes as ArrayList<Mem>
-
-                //Initialize database
-                /*val db = Room.databaseBuilder(
-                    requireContext(),
-                    AppDatabase::class.java, "mem_database"
-                ).allowMainThreadQueries().build()
-
-                val memDao = db?.memDao()
-
-                memDao?.insertAll(dataset)*/
-
-                client.close()
-
-                withContext(Dispatchers.Main) {
-
-                    // Faire un traitement sur le MainThread
-                    var adapter = CustomAdapter(dataset)
-
-                    recyclerView?.adapter = adapter
-                }
-
-        }
-
-
         var addButton = view.findViewById<Button>(R.id.addButton)
 
         addButton?.setOnClickListener {
@@ -100,6 +69,48 @@ class FragmentListTodo : Fragment() {
             goToFragmentAdd(null, null)
         }
 
+        //Initialize database
+        database= Room.databaseBuilder(
+            requireContext(),
+            AppDatabase::class.java, "mem_database"
+        ).allowMainThreadQueries().build()
+
+        dataset = database?.memDao()?.getAll() as ArrayList<Mem>
+
+        if(dataset?.isEmpty() == true){
+            loadDataFromNetwork()
+        }
+        else{
+            adapter = CustomAdapter(dataset)
+
+            recyclerView?.adapter = adapter
+        }
+
+    }
+
+    private fun loadDataFromNetwork() {
+        CoroutineScope(Dispatchers.IO).launch {
+            // Appel avec l’API
+            val client = HttpClient(CIO)
+            val response: HttpResponse = client.get("https://api.imgflip.com/get_memes")
+            println(response.status)
+            val gson = Gson()
+            val data: String = response.bodyAsText()
+            val memeResponse: MemResponse = gson.fromJson(data, MemResponse::class.java)
+
+            dataset = memeResponse.data.memes as ArrayList<Mem>
+            database?.memDao()?.insertAll(dataset)
+            client.close()
+
+            withContext(Dispatchers.Main) {
+
+                // Faire un traitement sur le MainThread
+                adapter = CustomAdapter(dataset)
+
+                recyclerView?.adapter = adapter
+            }
+
+        }
     }
 
     private fun goToFragmentAdd(position: Int? ,titre: String?) {

@@ -9,8 +9,8 @@ import com.example.tp_technomobile.model.Mem
 interface MemDao {
 
     @Query("SELECT * FROM mem")
-    fun getAll(): ArrayList<Mem>
+    fun getAll(): List<Mem>
     @Insert
-    fun insertAll(vararg mems: ArrayList<Mem>)
+    fun insertAll(mems: List<Mem>)
 
 }

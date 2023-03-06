@@ -2,7 +2,7 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
 }
-
+apply plugin: 'kotlin-kapt'
 android {
     namespace 'com.example.tp_technomobile'
     compileSdk 33
@@ -85,10 +85,10 @@ dependencies {
     var room_version = "2.5.0"
 
     implementation("androidx.room:room-runtime:$room_version")
-    annotationProcessor("androidx.room:room-compiler:$room_version")
+    //annotationProcessor("androidx.room:room-compiler:$room_version")
 
     // To use Kotlin annotation processing tool (kapt)
-    //kapt("androidx.room:room-compiler:$room_version")
+    kapt("androidx.room:room-compiler:$room_version")
     // To use Kotlin Symbol Processing (KSP)
     //ksp("androidx.room:room-compiler:$room_version")
 
