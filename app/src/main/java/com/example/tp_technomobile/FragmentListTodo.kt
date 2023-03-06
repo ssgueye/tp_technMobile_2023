@@ -1,11 +1,14 @@
 package com.example.tp_technomobile
 
+import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.fragment.findNavController
@@ -14,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.room.Room
 import com.example.tp_technomobile.data.MemResponse
 import com.example.tp_technomobile.database.AppDatabase
+import com.example.tp_technomobile.model.DataExpiration
 import com.example.tp_technomobile.model.Mem
 import com.example.tp_technomobile.recycleview.CustomAdapter
 import com.google.gson.Gson
@@ -25,6 +29,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.time.LocalDateTime
+import kotlin.streams.toList
 
 class FragmentListTodo : Fragment() {
 
@@ -56,6 +62,7 @@ class FragmentListTodo : Fragment() {
         return inflater.inflate(R.layout.fragment_list_todo, container, false)
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -65,7 +72,6 @@ class FragmentListTodo : Fragment() {
         var addButton = view.findViewById<Button>(R.id.addButton)
 
         addButton?.setOnClickListener {
-            //dataset.add("Item ${dataset.size+1}")
             goToFragmentAdd(null, null)
         }
 
@@ -77,13 +83,33 @@ class FragmentListTodo : Fragment() {
 
         dataset = database?.memDao()?.getAll() as ArrayList<Mem>
 
-        if(dataset?.isEmpty() == true){
+       if(dataset?.isEmpty() == true){
+
             loadDataFromNetwork()
+           //On met le temps actuel dans dataExpiration
+           var dataExpiration = DataExpiration(1, System.currentTimeMillis())
+           database?.dataExpirationTimeDao()?.insertDataExpiration(dataExpiration)
+
         }
         else{
-            adapter = CustomAdapter(dataset)
+            var getExpirationDate = database?.dataExpirationTimeDao()?.get()
 
-            recyclerView?.adapter = adapter
+           //mettre à jour pour chaque 10mn
+            if(System.currentTimeMillis() - getExpirationDate?.lastLoadedTime as Long > 10 * 60 * 1000){
+                loadDataFromNetwork()
+                //On met le temps actuel dans dataExpiration
+                getExpirationDate?.lastLoadedTime = System.currentTimeMillis()
+                database?.dataExpirationTimeDao()?.update(getExpirationDate)
+
+                Toast.makeText(context, "Memes updated...", Toast.LENGTH_SHORT).show()
+
+            }
+           else{
+                adapter = CustomAdapter(dataset)
+
+                recyclerView?.adapter = adapter
+            }
+
         }
 
     }
@@ -99,10 +125,14 @@ class FragmentListTodo : Fragment() {
             val memeResponse: MemResponse = gson.fromJson(data, MemResponse::class.java)
 
             dataset = memeResponse.data.memes as ArrayList<Mem>
-            database?.memDao()?.insertAll(dataset)
+
             client.close()
 
             withContext(Dispatchers.Main) {
+
+                database?.memDao()?.insertAll(dataset)
+                //Pour avoir le même affichage que la bdd
+                dataset = database?.memDao()?.getAll() as ArrayList<Mem>
 
                 // Faire un traitement sur le MainThread
                 adapter = CustomAdapter(dataset)
