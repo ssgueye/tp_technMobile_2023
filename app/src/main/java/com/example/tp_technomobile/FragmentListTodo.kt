@@ -105,6 +105,8 @@ class FragmentListTodo : Fragment() {
 
             }
            else{
+                Toast.makeText(context, "Data loaded from Database...", Toast.LENGTH_SHORT).show()
+
                 adapter = CustomAdapter(dataset)
 
                 recyclerView?.adapter = adapter
@@ -133,6 +135,7 @@ class FragmentListTodo : Fragment() {
                 database?.memDao()?.insertAll(dataset)
                 //Pour avoir le même affichage que la bdd
                 dataset = database?.memDao()?.getAll() as ArrayList<Mem>
+                Toast.makeText(context, "Data loaded from WEB API...", Toast.LENGTH_SHORT).show()
 
                 // Faire un traitement sur le MainThread
                 adapter = CustomAdapter(dataset)
